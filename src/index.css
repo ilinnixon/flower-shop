@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ❌ NO @apply with colors or text utilities */
+/* ✅ Only layout / reusable structures */
+
+@layer components {
+  .card {
+    border-radius: 1rem;
+    background: white;
+    padding: 1.5rem;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  }
+
+  .btn-primary {
+    border-radius: 9999px;
+    padding: 0.75rem 1.5rem;
+    background-color: #9CAF88; /* sage */
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #5F7A61; /* moss */
+  }
+
+  .btn-outline {
+    border-radius: 9999px;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #9CAF88;
+    color: #9CAF88;
+    transition: all 0.3s ease;
+  }
+
+  .btn-outline:hover {
+    background-color: #9CAF88;
+    color: white;
+  }
+
+  .btn-alert {
+    border-radius: 9999px;
+    padding: 0.5rem 1rem;
+    background-color: #F7C8D0; /* blush */
+    color: white;
+  }
+
+  .input {
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+  }
+
+  .page {
+    padding: 3rem 2.5rem;
+  }
+}
