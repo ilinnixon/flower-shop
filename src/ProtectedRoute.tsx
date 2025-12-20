@@ -1,9 +1,10 @@
+import type { ReactNode } from "react";
 import { useAuth } from "./authContext";
 
 export default function ProtectedRoute({
   children,
 }: {
-  children: JSX.Element;
+  children: ReactNode;
 }) {
   const { user, loading } = useAuth();
 
@@ -24,5 +25,5 @@ export default function ProtectedRoute({
     );
   }
 
-  return children;
+  return <>{children}</>;
 }
