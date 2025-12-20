@@ -1,10 +1,17 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth } from "./firebase";
 
+type ExtendedUser = User & {
+  accessToken?: string;
+};
+
 type AuthContextType = {
-  user: User | null;
+  user: ExtendedUser | null;
   loading: boolean;
 };
 
@@ -13,17 +20,39 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+export function AuthProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [user, setUser] = useState<ExtendedUser | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-    });
+    const unsub = onAuthStateChanged(
+      auth,
+      async (firebaseUser: any) => {
+        if (firebaseUser) {
+          const credential =
+            GoogleAuthProvider.credentialFromResult(
+              firebaseUser._tokenResponse
+            );
 
-    return unsubscribe;
+          setUser({
+            ...firebaseUser,
+            accessToken: credential?.accessToken,
+          });
+        } else {
+          setUser(null);
+        }
+
+        setLoading(false);
+      }
+    );
+
+    return unsub;
   }, []);
 
   return (

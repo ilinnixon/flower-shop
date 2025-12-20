@@ -1,26 +1,22 @@
-import type { ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import { useAuth } from "./authContext";
 
 export default function ProtectedRoute({
   children,
-}: {
-  children: ReactNode;
-}) {
+}: PropsWithChildren) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="p-10">Loading...</div>;
+    return <div className="p-10">Loading…</div>;
   }
 
   if (!user) {
     return (
       <div className="p-10 text-center">
         <h2 className="text-2xl font-semibold mb-4">
-          Please sign in to continue 🌸
+          Please sign in 🌸
         </h2>
-        <p className="text-gray-600">
-          This feature is available after Google sign-in.
-        </p>
+        <p>Google login is required.</p>
       </div>
     );
   }
