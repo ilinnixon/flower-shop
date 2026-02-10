@@ -8,17 +8,16 @@ import { auth } from "../firebase";
 import { useAuth } from "../authContext";
 
 export default function Navbar() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   const signIn = async () => {
-    const provider = new GoogleAuthProvider();
-
-    // ✅ Google Calendar read access
-    provider.addScope(
-      "https://www.googleapis.com/auth/calendar.readonly"
-    );
-
-    await signInWithPopup(auth, provider);
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (err) {
+      console.error("Google sign-in error:", err);
+      alert("Google sign-in failed. Check console.");
+    }
   };
 
   const logout = async () => {
@@ -27,25 +26,26 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow px-10 py-5 flex justify-between items-center">
-      <Link to="/" className="text-2xl font-semibold">
+      <Link to="/" className="text-xl font-semibold">
         flowershop 🌸
       </Link>
 
-      <div className="flex gap-6 items-center">
+      <div className="flex gap-4 items-center">
         <Link to="/shop">Shop</Link>
 
-        {user && (
+        {loading && <span>Loading…</span>}
+
+        {!loading && user && (
           <>
             <Link to="/people">People</Link>
             <Link to="/calendar">Calendar</Link>
+            <button onClick={logout} className="text-red-500">
+              Logout
+            </button>
           </>
         )}
 
-        {user ? (
-          <button onClick={logout} className="text-red-500">
-            Logout
-          </button>
-        ) : (
+        {!loading && !user && (
           <button onClick={signIn} className="btn-primary">
             Sign in with Google
           </button>

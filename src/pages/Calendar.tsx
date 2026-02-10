@@ -7,14 +7,45 @@ export default function Calendar() {
   const { user } = useAuth();
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user?.accessToken) return;
+    const loadEvents = async () => {
+      if (!user) {
+        setError("User not logged in");
+        setLoading(false);
+        return;
+      }
 
-    fetchUpcomingEvents(user.accessToken)
-      .then(setEvents)
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      try {
+        console.log("USER:", user);
+        console.log(
+          "ACCESS TOKEN:",
+          (user as any).accessToken
+        );
+
+        if (!(user as any).accessToken) {
+          throw new Error(
+            "No Google access token found"
+          );
+        }
+
+        const data = await fetchUpcomingEvents(
+        (user as any).googleAccessToken
+        );
+
+
+        console.log("CALENDAR DATA:", data);
+        setEvents(data || []);
+      } catch (err: any) {
+        console.error("Calendar fetch failed:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEvents();
   }, [user]);
 
   return (
@@ -25,6 +56,16 @@ export default function Calendar() {
         </h1>
 
         {loading && <p>Loading calendar…</p>}
+
+        {error && (
+          <p className="text-red-600">
+            Error: {error}
+          </p>
+        )}
+
+        {!loading && !error && events.length === 0 && (
+          <p>No upcoming events found.</p>
+        )}
 
         <div className="grid gap-6">
           {events.map((event) => (
@@ -37,10 +78,6 @@ export default function Calendar() {
                 {event.start?.dateTime ||
                   event.start?.date}
               </p>
-
-              <button className="btn-primary mt-4">
-                Prepare Bouquet 🌷
-              </button>
             </div>
           ))}
         </div>
