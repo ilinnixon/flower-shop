@@ -6,6 +6,8 @@ import People from "./pages/People";
 import Calendar from "./pages/Calendar";
 import SmartBouquet from "./pages/SmartBouquet";
 import ProtectedRoute from "./ProtectedRoute";
+import Admin from "./pages/Admin";
+
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/shop" element={<Shop />} />
+        <Route path="/admin" element={<Admin />} />
+
 
         <Route
           path="/people"

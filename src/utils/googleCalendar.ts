@@ -1,10 +1,18 @@
-export async function fetchUpcomingEvents(
+export async function fetchCalendarEvents(
   accessToken: string
 ) {
-  const now = new Date().toISOString();
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date();
+  end.setDate(end.getDate() + 7);
 
   const res = await fetch(
-    `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now}&maxResults=10&singleEvents=true&orderBy=startTime`,
+    `https://www.googleapis.com/calendar/v3/calendars/primary/events` +
+      `?timeMin=${start.toISOString()}` +
+      `&timeMax=${end.toISOString()}` +
+      `&singleEvents=true` +
+      `&orderBy=startTime`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -17,5 +25,5 @@ export async function fetchUpcomingEvents(
   }
 
   const data = await res.json();
-  return data.items;
+  return data.items ?? [];
 }
